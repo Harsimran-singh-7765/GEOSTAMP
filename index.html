@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeoStamp — Geotag your event photos</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/piexifjs/1.0.6/piexif.js"></script>
+    <style>
+        :root {
+            --bg: #12181a;
+            --panel: #1b2422;
+            --panel-2: #212b28;
+            --border: #2c3733;
+            --text: #f2f0e8;
+            --text-dim: #9aa39c;
+            --amber: #e8a33d;
+            --green: #1f9d63;
+            --mono: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+            --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--sans);
+            padding: 20px 16px 60px;
+        }
+
+        .wrap {
+            max-width: 1080px;
+            margin: 0 auto;
+        }
+
+        header {
+            margin-bottom: 22px;
+        }
+
+        header .eyebrow {
+            font-family: var(--mono);
+            font-size: 12px;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            color: var(--amber);
+            margin: 0 0 6px;
+        }
+
+        header h1 {
+            margin: 0 0 6px;
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: -.01em;
+        }
+
+        header p {
+            margin: 0;
+            color: var(--text-dim);
+            font-size: 14px;
+            max-width: 60ch;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 860px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 18px;
+        }
+
+        .panel+.panel {
+            margin-top: 16px;
+        }
+
+        .panel h2 {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            color: var(--text-dim);
+            margin: 0 0 12px;
+            font-weight: 600;
+        }
+
+        .dropzone {
+            border: 1.5px dashed var(--border);
+            border-radius: 10px;
+            padding: 22px 14px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color .15s, background .15s;
+        }
+
+        .dropzone:hover,
+        .dropzone.drag {
+            border-color: var(--amber);
+            background: rgba(232, 163, 61, .06);
+        }
+
+        .dropzone svg {
+            opacity: .6;
+            margin-bottom: 8px;
+        }
+
+        .dropzone .main {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .dropzone .sub {
+            font-size: 12px;
+            color: var(--text-dim);
+            margin-top: 4px;
+        }
+
+        input[type=file] {
+            display: none;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            color: var(--text-dim);
+            margin: 0 0 4px;
+        }
+
+        .field {
+            margin-bottom: 12px;
+        }
+
+        .row2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        input[type=text],
+        input[type=number],
+        input[type=date],
+        input[type=time] {
+            width: 100%;
+            background: var(--panel-2);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 8px;
+            padding: 9px 10px;
+            font-size: 13px;
+            font-family: var(--sans);
+        }
+
+        input[type=number] {
+            font-family: var(--mono);
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--amber);
+        }
+
+        button {
+            font-family: var(--sans);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 8px;
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            background: var(--panel-2);
+            color: var(--text);
+            width: 100%;
+        }
+
+        button:hover {
+            border-color: var(--amber);
+        }
+
+        button:active {
+            transform: scale(.99);
+        }
+
+        button.primary {
+            background: var(--amber);
+            color: #231603;
+            border-color: var(--amber);
+        }
+
+        button.primary:hover {
+            background: #f0b158;
+        }
+
+        button:disabled {
+            opacity: .4;
+            cursor: not-allowed;
+        }
+
+        .status {
+            font-size: 12px;
+            color: var(--text-dim);
+            margin-top: 8px;
+            min-height: 16px;
+        }
+
+        .status.ok {
+            color: var(--green);
+        }
+
+        .status.err {
+            color: #e2645a;
+        }
+
+        .previewwrap {
+            background: #0b0f0f;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 320px;
+            overflow: hidden;
+            padding: 10px;
+        }
+
+        .previewwrap canvas {
+            max-width: 100%;
+            max-height: 72vh;
+            display: block;
+            border-radius: 4px;
+        }
+
+        .previewempty {
+            color: var(--text-dim);
+            font-size: 13px;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .togglegroup {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .togglegroup button {
+            width: auto;
+            flex: 1;
+            padding: 8px 10px;
+            font-size: 12px;
+        }
+
+        .togglegroup button.active {
+            background: var(--amber);
+            color: #231603;
+            border-color: var(--amber);
+        }
+
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin: 14px 0;
+        }
+
+        .hint {
+            font-size: 11px;
+            color: var(--text-dim);
+            line-height: 1.5;
+            margin-top: 6px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <header>
+            <p class="eyebrow">GeoStamp</p>
+            <h1>Geotag your event photos, even after the fact</h1>
+            <p>Upload any photo, set the location and time, and get back a properly geotagged image — real satellite
+                map, overlay burned in, GPS written into the file's metadata.</p>
+        </header>
+
+        <div class="grid">
+            <div>
+                <div class="panel">
+                    <h2>1. Photo</h2>
+                    <div class="dropzone" id="dropzone">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.6">
+                            <path d="M12 16V4M12 4l-4 4M12 4l4 4" />
+                            <path d="M4 16v3a2 2 0 002 2h12a2 2 0 002-2v-3" />
+                        </svg>
+                        <div class="main">Tap to upload or take a photo</div>
+                        <div class="sub">JPG or PNG · opens camera directly on mobile</div>
+                    </div>
+                    <input type="file" id="fileInput" accept="image/*" capture="environment">
+                </div>
+
+                <div class="panel">
+                    <h2>2. Location</h2>
+                    <button class="primary" id="locBtn" type="button">Use my current location</button>
+                    <div class="status" id="locStatus"></div>
+                    <div class="divider"></div>
+                    <div class="row2">
+                        <div class="field">
+                            <label for="lat">Latitude</label>
+                            <input type="number" id="lat" step="0.000001" placeholder="28.630670">
+                        </div>
+                        <div class="field">
+                            <label for="lng">Longitude</label>
+                            <input type="number" id="lng" step="0.000001" placeholder="77.371466">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="placeName">Place / city</label>
+                        <input type="text" id="placeName" placeholder="Noida, Uttar Pradesh, India">
+                    </div>
+                    <div class="field">
+                        <label for="address">Full address</label>
+                        <input type="text" id="address"
+                            placeholder="Institutional Area, Sector 62, Noida, UP 201309, India">
+                    </div>
+                    <div class="status" id="mapStatus"></div>
+                </div>
+
+                <div class="panel">
+                    <h2>3. Date & time</h2>
+                    <div class="row2">
+                        <div class="field">
+                            <label for="dateInput">Date</label>
+                            <input type="date" id="dateInput">
+                        </div>
+                        <div class="field">
+                            <label for="timeInput">Time</label>
+                            <input type="time" id="timeInput" step="1">
+                        </div>
+                    </div>
+                    <div class="hint">Defaults to now. Edit freely if you're geotagging a photo after the event.</div>
+                </div>
+
+                <div class="panel">
+                    <h2>4. Label</h2>
+                    <div class="field">
+                        <label for="appName">Overlay title (top badge)</label>
+                        <input type="text" id="appName" placeholder="NSS JIIT" value="NSS JIIT">
+                    </div>
+                    <div class="field">
+                        <label for="noteText">Note line (bottom of overlay)</label>
+                        <input type="text" id="noteText" placeholder="Note : Captured by GeoStamp"
+                            value="Note : Captured by GeoStamp">
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="panel">
+                    <h2>Live preview</h2>
+                    <div class="previewwrap" id="previewWrap">
+                        <div class="previewempty">Upload a photo to see the geotag overlay here</div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h2>Export</h2>
+                    <div class="field">
+                        <label>Format</label>
+                        <div class="togglegroup">
+                            <button type="button" class="fmtBtn active" data-fmt="jpeg">JPEG (with GPS
+                                metadata)</button>
+                            <button type="button" class="fmtBtn" data-fmt="png">PNG (lossless, no metadata)</button>
+                        </div>
+                    </div>
+                    <button class="primary" id="downloadBtn" disabled>Download geotagged photo</button>
+                    <div class="status" id="exportStatus"></div>
+                    <div class="hint" id="exifHint"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const state = { img: null, naturalW: 0, naturalH: 0, format: 'jpeg' };
+        const $ = id => document.getElementById(id);
+        const dropzone = $('dropzone');
+        const fileInput = $('fileInput');
+        const previewWrap = $('previewWrap');
+        const locBtn = $('locBtn');
+        const locStatus = $('locStatus');
+        const mapStatus = $('mapStatus');
+        const downloadBtn = $('downloadBtn');
+        const exportStatus = $('exportStatus');
+        const exifHint = $('exifHint');
+
+        (function initDateTime() {
+            const now = new Date();
+            $('dateInput').value = now.toISOString().slice(0, 10);
+            $('timeInput').value = now.toTimeString().slice(0, 8);
+        })();
+
+        exifHint.textContent = typeof piexif === 'undefined'
+            ? 'Metadata library failed to load — overlay will still be baked in, but GPS EXIF tags won\'t be embedded.'
+            : 'GPS coordinates + timestamp will be embedded as EXIF metadata in JPEG exports, in addition to the visible overlay.';
+
+        dropzone.addEventListener('click', () => fileInput.click());
+        ['dragover', 'dragenter'].forEach(ev => dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.add('drag'); }));
+        ['dragleave', 'drop'].forEach(ev => dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.remove('drag'); }));
+        dropzone.addEventListener('drop', e => { const f = e.dataTransfer.files[0]; if (f) loadImage(f); });
+        fileInput.addEventListener('change', e => { const f = e.target.files[0]; if (f) loadImage(f); });
+
+        function loadImage(file) {
+            const reader = new FileReader();
+            reader.onload = e => {
+                const img = new Image();
+                img.onload = () => {
+                    state.img = img;
+                    state.naturalW = img.naturalWidth;
+                    state.naturalH = img.naturalHeight;
+                    downloadBtn.disabled = false;
+                    redraw();
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // ---------- location ----------
+        locBtn.addEventListener('click', () => {
+            if (!navigator.geolocation) {
+                locStatus.textContent = 'Geolocation not supported on this device/browser.';
+                locStatus.className = 'status err';
+                return;
+            }
+            locStatus.textContent = 'Getting your location…';
+            locStatus.className = 'status';
+            navigator.geolocation.getCurrentPosition(async pos => {
+                const lat = pos.coords.latitude, lng = pos.coords.longitude;
+                $('lat').value = lat.toFixed(6);
+                $('lng').value = lng.toFixed(6);
+                locStatus.textContent = 'Location captured. Looking up address…';
+                scheduleMapFetch();
+                redraw();
+                try {
+                    const r = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1`);
+                    const data = await r.json();
+                    if (data && data.address) {
+                        const a = data.address;
+                        const place = a.suburb || a.neighbourhood || a.city || a.town || a.village || a.county || '';
+                        const cityLine = [place, a.state, a.country].filter(Boolean).join(', ');
+                        $('placeName').value = cityLine;
+                        $('address').value = data.display_name || '';
+                        locStatus.textContent = 'Location and address filled in.';
+                        locStatus.className = 'status ok';
+                    } else {
+                        locStatus.textContent = 'Coordinates captured. Address lookup returned nothing — fill it manually.';
+                    }
+                } catch (err) {
+                    locStatus.textContent = 'Coordinates captured. Address lookup failed — fill it manually.';
+                }
+                redraw();
+            }, err => {
+                locStatus.textContent = 'Could not get location: ' + err.message;
+                locStatus.className = 'status err';
+            }, { enableHighAccuracy: true, timeout: 10000 });
+        });
+
+        ['placeName', 'address', 'dateInput', 'timeInput', 'appName', 'noteText'].forEach(id => {
+            $(id).addEventListener('input', redraw);
+        });
+        ['lat', 'lng'].forEach(id => {
+            $(id).addEventListener('input', () => { scheduleMapFetch(); redraw(); });
+        });
+
+        document.querySelectorAll('.fmtBtn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.fmtBtn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                state.format = btn.dataset.fmt;
+            });
+        });
+
+        // ---------- real satellite map fetching (with safe CORS-taint fallback) ----------
+        let mapCanvas = null;     // untainted composed+cropped canvas, ready to draw
+        let mapLoading = false;
+        let mapFailed = false;
+        let mapFetchTimer = null;
+        let mapFetchToken = 0;
+        let mapLatLngUsed = null;
+
+        function scheduleMapFetch() {
+            clearTimeout(mapFetchTimer);
+            mapFetchTimer = setTimeout(fetchMap, 550);
+        }
+
+        function loadTileImg(url) {
+            return new Promise(resolve => {
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+                img.onload = () => resolve(img);
+                img.onerror = () => resolve(null);
+                img.src = url;
+            });
+        }
+
+        async function buildMapCanvas(lat, lng, outSize) {
+            try {
+                const zoom = 18;
+                const n = Math.pow(2, zoom);
+                const worldX = (lng + 180) / 360 * n * 256;
+                const latRad = lat * Math.PI / 180;
+                const worldY = (1 - Math.log(Math.tan(latRad) + 1 / Math.cos(latRad)) / Math.PI) / 2 * n * 256;
+                const txC = Math.floor(worldX / 256), tyC = Math.floor(worldY / 256);
+
+                const composite = document.createElement('canvas');
+                composite.width = 768; composite.height = 768;
+                const cctx = composite.getContext('2d');
+
+                const promises = [];
+                for (let dx = -1; dx <= 1; dx++) {
+                    for (let dy = -1; dy <= 1; dy++) {
+                        const tx = txC + dx, ty = tyC + dy;
+                        const url = `https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${zoom}/${ty}/${tx}`;
+                        promises.push(loadTileImg(url).then(img => {
+                            if (img) cctx.drawImage(img, (dx + 1) * 256, (dy + 1) * 256, 256, 256);
+                        }));
+                    }
+                }
+                await Promise.all(promises);
+
+                try { composite.toDataURL(); } catch (e) { return null; }
+
+                const cropSize = 230;
+                const anchorFracX = 0.5, anchorFracY = 0.56;
+                const srcX = (worldX - (txC - 1) * 256) - cropSize * anchorFracX;
+                const srcY = (worldY - (tyC - 1) * 256) - cropSize * anchorFracY;
+
+                const out = document.createElement('canvas');
+                out.width = outSize; out.height = outSize;
+                const octx = out.getContext('2d');
+                octx.drawImage(composite, srcX, srcY, cropSize, cropSize, 0, 0, outSize, outSize);
+
+                try { out.toDataURL(); } catch (e) { return null; }
+                return out;
+            } catch (e) { return null; }
+        }
+
+        async function fetchMap() {
+            const lat = parseFloat($('lat').value), lng = parseFloat($('lng').value);
+            if (isNaN(lat) || isNaN(lng)) { mapCanvas = null; redraw(); return; }
+            const token = ++mapFetchToken;
+            mapLoading = true; mapFailed = false;
+            mapStatus.textContent = 'Loading satellite map…';
+            mapStatus.className = 'status';
+            redraw();
+            const canvas = await buildMapCanvas(lat, lng, 320);
+            if (token !== mapFetchToken) return;
+            mapLoading = false;
+            if (canvas) {
+                mapCanvas = canvas;
+                mapLatLngUsed = { lat, lng };
+                mapStatus.textContent = 'Satellite map loaded.';
+                mapStatus.className = 'status ok';
+            } else {
+                mapCanvas = null;
+                mapFailed = true;
+                mapStatus.textContent = 'Could not load satellite tiles (network/CORS) — using a placeholder map instead.';
+                mapStatus.className = 'status err';
+            }
+            redraw();
+        }
+
+        // ---------- drawing helpers ----------
+        let overlayCanvas = null;
+
+        function getGmtOffsetString() {
+            const offsetMin = new Date().getTimezoneOffset() * -1;
+            const sign = offsetMin >= 0 ? '+' : '-';
+            const abs = Math.abs(offsetMin);
+            const hh = String(Math.floor(abs / 60)).padStart(2, '0');
+            const mm = String(abs % 60).padStart(2, '0');
+            return `GMT${sign}${hh}:${mm}`;
+        }
+
+        function formatDateLine() {
+            const dStr = $('dateInput').value;
+            const tStr = $('timeInput').value || '00:00:00';
+            if (!dStr) return '';
+            const [y, mo, da] = dStr.split('-').map(Number);
+            const [h, mi] = tStr.split(':').map(Number);
+            const dateObj = new Date(y, mo - 1, da, h, mi);
+            const weekday = dateObj.toLocaleDateString('en-US', { weekday: 'long' });
+            const dd = String(da).padStart(2, '0');
+            const mm = String(mo).padStart(2, '0');
+            const hh12 = ((h % 12) || 12);
+            const ampm = h >= 12 ? 'PM' : 'AM';
+            const miStr = String(mi).padStart(2, '0');
+            return `${weekday}, ${dd}/${mm}/${y} ${String(hh12).padStart(2, '0')}:${miStr} ${ampm} ${getGmtOffsetString()}`;
+        }
+
+        function roundRectPath(ctx, x, y, w, h, r) {
+            ctx.beginPath();
+            ctx.moveTo(x + r, y);
+            ctx.arcTo(x + w, y, x + w, y + h, r);
+            ctx.arcTo(x + w, y + h, x, y + h, r);
+            ctx.arcTo(x, y + h, x, y, r);
+            ctx.arcTo(x, y, x + w, y, r);
+            ctx.closePath();
+        }
+
+        function drawPin(ctx, cx, cyTip, pinR) {
+            ctx.beginPath();
+            ctx.ellipse(cx, cyTip + pinR * 0.15, pinR * 1.05, pinR * 0.32, 0, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(0,0,0,0.4)';
+            ctx.fill();
+            const cyTop = cyTip - pinR * 2.15;
+            ctx.beginPath();
+            ctx.moveTo(cx, cyTip);
+            ctx.quadraticCurveTo(cx - pinR * 1.25, cyTop + pinR * 1.2, cx, cyTop);
+            ctx.quadraticCurveTo(cx + pinR * 1.25, cyTop + pinR * 1.2, cx, cyTip);
+            ctx.fillStyle = '#e2493a';
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(0,0,0,0.25)';
+            ctx.lineWidth = pinR * 0.08;
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(cx, cyTop + pinR * 0.85, pinR * 0.42, 0, Math.PI * 2);
+            ctx.fillStyle = '#fff';
+            ctx.fill();
+        }
+
+        function drawProceduralMap(ctx, x, y, size, lat, lng) {
+            const seed = Math.abs(Math.round((lat || 0) * 1000) + Math.round((lng || 0) * 1000));
+            const rand = n => { const v = Math.sin(seed + n) * 10000; return v - Math.floor(v); };
+            const g = ctx.createLinearGradient(x, y, x + size, y + size);
+            g.addColorStop(0, '#3a4a3c'); g.addColorStop(1, '#25322a');
+            ctx.fillStyle = g; ctx.fillRect(x, y, size, size);
+            ctx.strokeStyle = 'rgba(255,255,255,0.14)'; ctx.lineWidth = size * 0.01;
+            for (let i = 1; i < 5; i++) {
+                const off = (rand(i) * 0.5 + 0.15) * size;
+                ctx.beginPath(); ctx.moveTo(x, y + off); ctx.lineTo(x + size, y + off + rand(i + 10) * size * 0.3 - size * 0.15); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(x + off, y); ctx.lineTo(x + off + rand(i + 20) * size * 0.3 - size * 0.15, y + size); ctx.stroke();
+            }
+            ctx.fillStyle = 'rgba(120,140,110,0.35)';
+            for (let i = 0; i < 4; i++) {
+                const bw = size * (0.1 + rand(i + 30) * 0.12), bh = size * (0.1 + rand(i + 40) * 0.12);
+                ctx.fillRect(x + rand(i + 50) * (size - bw), y + rand(i + 60) * (size - bh), bw, bh);
+            }
+        }
+
+        function drawMiniMap(ctx, x, y, size, lat, lng) {
+            ctx.save();
+            const r = size * 0.14;
+            roundRectPath(ctx, x, y, size, size, r);
+            ctx.clip();
+
+            if (mapCanvas && mapLatLngUsed && !isNaN(lat) && !isNaN(lng)) {
+                ctx.drawImage(mapCanvas, x, y, size, size);
+            } else {
+                drawProceduralMap(ctx, x, y, size, lat, lng);
+                if (mapLoading) {
+                    ctx.fillStyle = 'rgba(0,0,0,0.35)';
+                    ctx.fillRect(x, y, size, size);
+                }
+            }
+
+            const cx = x + size * 0.5, cyTip = y + size * 0.56;
+            drawPin(ctx, cx, cyTip, size * 0.1);
+
+            ctx.restore();
+            roundRectPath(ctx, x, y, size, size, r);
+            ctx.strokeStyle = 'rgba(255,255,255,0.55)';
+            ctx.lineWidth = size * 0.012;
+            ctx.stroke();
+        }
+
+        function drawBadgeIcon(ctx, cx, cy, r) {
+            ctx.beginPath();
+            ctx.arc(cx, cy, r, 0, Math.PI * 2);
+            ctx.fillStyle = '#2f7ab8';
+            ctx.fill();
+            ctx.save();
+            ctx.translate(cx, cy);
+            ctx.scale(r / 9, r / 9);
+            ctx.fillStyle = '#fff';
+            roundRectPath(ctx, -6, -3.5, 12, 8, 1.5);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.moveTo(-2.2, -3.5); ctx.lineTo(-1, -5); ctx.lineTo(1, -5); ctx.lineTo(2.2, -3.5); ctx.closePath();
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(0, 0.5, 2.4, 0, Math.PI * 2);
+            ctx.fillStyle = '#2f7ab8';
+            ctx.fill();
+            ctx.restore();
+        }
+
+        function wrapText(ctx, text, maxW, maxLines) {
+            const words = text.split(' ');
+            let line = '', lines = [];
+            for (const word of words) {
+                const test = line ? line + ' ' + word : word;
+                if (ctx.measureText(test).width > maxW && line) { lines.push(line); line = word; }
+                else line = test;
+            }
+            if (line) lines.push(line);
+            return lines.slice(0, maxLines);
+        }
+
+        function redraw() {
+            if (!state.img) return;
+            const w = state.naturalW, h = state.naturalH;
+
+            if (!overlayCanvas) {
+                overlayCanvas = document.createElement('canvas');
+                previewWrap.innerHTML = '';
+                previewWrap.appendChild(overlayCanvas);
+            }
+            overlayCanvas.width = w; overlayCanvas.height = h;
+            const ctx = overlayCanvas.getContext('2d');
+            ctx.drawImage(state.img, 0, 0, w, h);
+
+            const scale = w / 1000;
+            const lat = parseFloat($('lat').value);
+            const lng = parseFloat($('lng').value);
+            const place = $('placeName').value.trim();
+            const address = $('address').value.trim();
+            const appName = $('appName').value.trim() || 'GeoStamp';
+            const note = $('noteText').value.trim();
+            const isIndia = /india/i.test(address) || /india/i.test(place);
+
+            // top-right badge
+            const sansFont = w2 => `${w2} -apple-system, sans-serif`;
+            ctx.font = `700 ${13 * scale}px -apple-system, sans-serif`;
+            const badgePadX = 12 * scale, badgeH = 30 * scale;
+            const badgeTextW = ctx.measureText(appName).width;
+            const badgeW = badgeTextW + badgePadX * 2 + 26 * scale;
+            const bx = w - badgeW - 18 * scale, by = 18 * scale;
+            ctx.fillStyle = 'rgba(0,0,0,0.55)';
+            roundRectPath(ctx, bx, by, badgeW, badgeH, badgeH / 2);
+            ctx.fill();
+            drawBadgeIcon(ctx, bx + badgeH / 2, by + badgeH / 2, badgeH * 0.34);
+            ctx.fillStyle = '#fff';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(appName, bx + badgeH * 0.92, by + badgeH / 2 + 1);
+
+            // bottom panel
+            const panelH = h * 0.235;
+            const panelY = h - panelH;
+            const grad = ctx.createLinearGradient(0, panelY - panelH * 0.45, 0, h);
+            grad.addColorStop(0, 'rgba(0,0,0,0)');
+            grad.addColorStop(1, 'rgba(0,0,0,0.8)');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, panelY - panelH * 0.45, w, panelH * 1.45);
+
+            const pad = 24 * scale;
+            const mapSize = panelH * 0.9;
+            const mapX = pad, mapY = h - pad * 0.6 - mapSize;
+            if (!isNaN(lat) && !isNaN(lng)) {
+                drawMiniMap(ctx, mapX, mapY, mapSize, lat, lng);
+            }
+
+            const textX = (!isNaN(lat) && !isNaN(lng)) ? mapX + mapSize + 18 * scale : pad;
+            let textY = mapY + 22 * scale;
+
+            ctx.textBaseline = 'alphabetic';
+            ctx.fillStyle = '#ffffff';
+            ctx.font = `700 ${22 * scale}px -apple-system, sans-serif`;
+            let titleLine = place || 'Location not set';
+            if (isIndia) titleLine += '  🇮🇳';
+            ctx.fillText(titleLine, textX, textY);
+            textY += 25 * scale;
+
+            ctx.font = `400 ${13.5 * scale}px -apple-system, sans-serif`;
+            ctx.fillStyle = 'rgba(255,255,255,0.92)';
+            if (address) {
+                const maxW = w - textX - pad;
+                const lines = wrapText(ctx, address, maxW, 2);
+                for (const l of lines) { ctx.fillText(l, textX, textY); textY += 17.5 * scale; }
+            }
+
+            if (!isNaN(lat) && !isNaN(lng)) {
+                ctx.font = `700 ${13.5 * scale}px -apple-system, sans-serif`;
+                ctx.fillStyle = '#fff';
+                ctx.fillText(`Lat ${lat.toFixed(6)}, Long ${lng.toFixed(6)}`, textX, textY);
+                textY += 18.5 * scale;
+            }
+
+            const dateLine = formatDateLine();
+            if (dateLine) {
+                ctx.font = `400 ${13.5 * scale}px -apple-system, sans-serif`;
+                ctx.fillStyle = 'rgba(255,255,255,0.88)';
+                ctx.fillText(dateLine, textX, textY);
+                textY += 17.5 * scale;
+            }
+
+            if (note) {
+                ctx.font = `400 ${12 * scale}px -apple-system, sans-serif`;
+                ctx.fillStyle = 'rgba(255,255,255,0.62)';
+                ctx.fillText(note, textX, textY);
+            }
+        }
+
+        // ---------- export ----------
+        function toDMS(deg) {
+            const d = Math.floor(deg);
+            const minFloat = (deg - d) * 60;
+            const m = Math.floor(minFloat);
+            const secFloat = (minFloat - m) * 60;
+            const s = Math.round(secFloat * 100);
+            return [[d, 1], [m, 1], [s, 100]];
+        }
+        function pad2(n) { return String(n).padStart(2, '0'); }
+
+        downloadBtn.addEventListener('click', () => {
+            if (!overlayCanvas) return;
+            exportStatus.textContent = 'Preparing download…';
+            exportStatus.className = 'status';
+
+            const lat = parseFloat($('lat').value);
+            const lng = parseFloat($('lng').value);
+            const dStr = $('dateInput').value;
+            const tStr = $('timeInput').value || '00:00:00';
+
+            function finish(blob, filename, msg, cls) {
+                triggerDownload(blob, filename);
+                exportStatus.textContent = msg;
+                exportStatus.className = cls;
+            }
+
+            if (state.format === 'png') {
+                overlayCanvas.toBlob(blob => {
+                    if (!blob) { exportStatus.textContent = 'Export blocked (a map tile without permission for cross-origin use). Try PNG again after the satellite map finishes loading, or switch off satellite view by clearing lat/long.'; exportStatus.className = 'status err'; return; }
+                    finish(blob, 'geostamp-photo.png', 'Downloaded as PNG (lossless, no embedded GPS metadata).', 'status ok');
+                }, 'image/png');
+                return;
+            }
+
+            let jpegDataUrl;
+            try {
+                jpegDataUrl = overlayCanvas.toDataURL('image/jpeg', 0.95);
+            } catch (e) {
+                exportStatus.textContent = 'Could not export — a map tile blocked cross-origin export. Wait for the map to finish loading and try again.';
+                exportStatus.className = 'status err';
+                return;
+            }
+
+            if (typeof piexif === 'undefined' || isNaN(lat) || isNaN(lng)) {
+                fetch(jpegDataUrl).then(r => r.blob()).then(blob => {
+                    finish(blob, 'geostamp-photo.jpg',
+                        isNaN(lat) ? 'Downloaded as JPEG. Set latitude/longitude to embed GPS metadata.' : 'Downloaded as JPEG (metadata library unavailable, overlay still baked in).',
+                        'status ok');
+                });
+                return;
+            }
+
+            try {
+                const [y, mo, da] = dStr.split('-').map(Number);
+                const [h, mi, se] = tStr.split(':').map(Number);
+                const exifDateStr = `${y}:${pad2(mo)}:${pad2(da)} ${pad2(h)}:${pad2(mi)}:${pad2(se || 0)}`;
+
+                const zeroth = {}, exifIfd = {}, gps = {};
+                gps[piexif.GPSIFD.GPSLatitudeRef] = lat >= 0 ? 'N' : 'S';
+                gps[piexif.GPSIFD.GPSLatitude] = toDMS(Math.abs(lat));
+                gps[piexif.GPSIFD.GPSLongitudeRef] = lng >= 0 ? 'E' : 'W';
+                gps[piexif.GPSIFD.GPSLongitude] = toDMS(Math.abs(lng));
+                exifIfd[piexif.ExifIFD.DateTimeOriginal] = exifDateStr;
+                exifIfd[piexif.ExifIFD.DateTimeDigitized] = exifDateStr;
+                zeroth[piexif.ImageIFD.DateTime] = exifDateStr;
+                zeroth[piexif.ImageIFD.Software] = 'GeoStamp';
+                const addr = $('address').value.trim() || $('placeName').value.trim();
+                if (addr) zeroth[piexif.ImageIFD.ImageDescription] = addr;
+
+                const exifBytes = piexif.dump({ '0th': zeroth, 'Exif': exifIfd, 'GPS': gps });
+                const newDataUrl = piexif.insert(exifBytes, jpegDataUrl);
+                fetch(newDataUrl).then(r => r.blob()).then(blob => {
+                    finish(blob, 'geostamp-photo.jpg', 'Downloaded — overlay burned in and GPS/time embedded in EXIF metadata.', 'status ok');
+                });
+            } catch (err) {
+                fetch(jpegDataUrl).then(r => r.blob()).then(blob => {
+                    finish(blob, 'geostamp-photo.jpg', 'Downloaded as JPEG. Could not embed metadata: ' + err.message, 'status err');
+                });
+            }
+        });
+
+        function triggerDownload(blob, filename) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = filename;
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
+            setTimeout(() => URL.revokeObjectURL(url), 2000);
+        }
+    </script>
+</body>
+
+</html>
