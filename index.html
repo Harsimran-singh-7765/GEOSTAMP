@@ -33,7 +33,7 @@
         }
 
         .wrap {
-            max-width: 1080px;
+            max-width: 1140px;
             margin: 0 auto;
         }
 
@@ -66,11 +66,11 @@
 
         .grid {
             display: grid;
-            grid-template-columns: 380px 1fr;
+            grid-template-columns: 420px 1fr;
             gap: 20px;
         }
 
-        @media (max-width: 860px) {
+        @media (max-width: 960px) {
             .grid {
                 grid-template-columns: 1fr;
             }
@@ -93,6 +93,15 @@
             letter-spacing: .08em;
             color: var(--text-dim);
             margin: 0 0 12px;
+            font-weight: 600;
+        }
+
+        .section-subtitle {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            color: var(--amber);
+            margin: 14px 0 8px;
             font-weight: 600;
         }
 
@@ -171,6 +180,101 @@
             border-color: var(--amber);
         }
 
+        .slider-field {
+            margin-bottom: 12px;
+        }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: var(--text-dim);
+            margin-bottom: 5px;
+        }
+
+        .slider-val {
+            font-family: var(--mono);
+            color: var(--amber);
+            font-weight: 600;
+            font-size: 11px;
+        }
+
+        input[type=range] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 6px;
+            background: var(--panel-2);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            outline: none;
+            cursor: pointer;
+            margin: 4px 0;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--amber);
+            cursor: pointer;
+            border: 2px solid #1b2422;
+            transition: transform .1s;
+        }
+
+        input[type=range]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text);
+            cursor: pointer;
+            user-select: none;
+            margin-bottom: 8px;
+        }
+
+        .checkbox-label input[type=checkbox] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--amber);
+            cursor: pointer;
+        }
+
+        .color-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--panel-2);
+            border: 1px solid var(--border);
+            padding: 6px 10px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .color-row label {
+            margin: 0;
+            font-size: 12px;
+            color: var(--text);
+        }
+
+        input[type=color] {
+            -webkit-appearance: none;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            width: 34px;
+            height: 28px;
+            cursor: pointer;
+            background: transparent;
+            padding: 0;
+        }
+
         button {
             font-family: var(--sans);
             font-size: 13px;
@@ -182,6 +286,7 @@
             background: var(--panel-2);
             color: var(--text);
             width: 100%;
+            transition: background .15s, border-color .15s, transform .1s;
         }
 
         button:hover {
@@ -200,6 +305,23 @@
 
         button.primary:hover {
             background: #f0b158;
+        }
+
+        button.btn-secondary {
+            background: var(--panel-2);
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            font-size: 12px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-weight: 500;
+            width: 100%;
+            margin-top: 8px;
+        }
+
+        button.btn-secondary:hover {
+            color: var(--text);
+            border-color: var(--amber);
         }
 
         button:disabled {
@@ -229,16 +351,16 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 320px;
+            min-height: 380px;
             overflow: hidden;
             padding: 10px;
         }
 
         .previewwrap canvas {
             max-width: 100%;
-            max-height: 72vh;
+            max-height: 75vh;
             display: block;
-            border-radius: 4px;
+            border-radius: 6px;
         }
 
         .previewempty {
@@ -279,6 +401,27 @@
             line-height: 1.5;
             margin-top: 6px;
         }
+
+        footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-dim);
+        }
+
+        footer a {
+            color: var(--amber);
+            text-decoration: none;
+            font-weight: 600;
+            transition: opacity .15s;
+        }
+
+        footer a:hover {
+            opacity: 0.85;
+            text-decoration: underline;
+        }
     </style>
 </head>
 
@@ -286,13 +429,14 @@
     <div class="wrap">
         <header>
             <p class="eyebrow">GeoStamp</p>
-            <h1>Geotag your event photos, even after the fact</h1>
-            <p>Upload any photo, set the location and time, and get back a properly geotagged image — real satellite
-                map, overlay burned in, GPS written into the file's metadata.</p>
+            <h1>Geotag your event photos</h1>
+            <p>Upload any photo, set location & time, customize font sizes and styling on the image, and download with
+                embedded EXIF GPS metadata.</p>
         </header>
 
         <div class="grid">
             <div>
+                <!-- 1. Photo -->
                 <div class="panel">
                     <h2>1. Photo</h2>
                     <div class="dropzone" id="dropzone">
@@ -307,33 +451,42 @@
                     <input type="file" id="fileInput" accept="image/*" capture="environment">
                 </div>
 
+                <!-- 2. Location & Map -->
                 <div class="panel">
-                    <h2>2. Location</h2>
+                    <h2>2. Location & Map</h2>
                     <button class="primary" id="locBtn" type="button">Use my current location</button>
                     <div class="status" id="locStatus"></div>
                     <div class="divider"></div>
                     <div class="row2">
                         <div class="field">
                             <label for="lat">Latitude</label>
-                            <input type="number" id="lat" step="0.000001" placeholder="28.630670">
+                            <input type="number" id="lat" step="0.000001" placeholder="28.629541">
                         </div>
                         <div class="field">
                             <label for="lng">Longitude</label>
-                            <input type="number" id="lng" step="0.000001" placeholder="77.371466">
+                            <input type="number" id="lng" step="0.000001" placeholder="77.372505">
                         </div>
                     </div>
                     <div class="field">
-                        <label for="placeName">Place / city</label>
+                        <label for="placeName">Place / City header</label>
                         <input type="text" id="placeName" placeholder="Noida, Uttar Pradesh, India">
                     </div>
                     <div class="field">
                         <label for="address">Full address</label>
                         <input type="text" id="address"
-                            placeholder="Institutional Area, Sector 62, Noida, UP 201309, India">
+                            placeholder="TV room Jaypee institute of information technology, Vishwakarma Road, Sector 62, Noida, Dadri, Gautam Buddha Nagar, Uttar Pradesh, 201014, India">
+                    </div>
+                    <div class="field">
+                        <label>Mini Map Style</label>
+                        <div class="togglegroup">
+                            <button type="button" class="mapTypeBtn active" data-type="street">Street Map</button>
+                            <button type="button" class="mapTypeBtn" data-type="satellite">Satellite</button>
+                        </div>
                     </div>
                     <div class="status" id="mapStatus"></div>
                 </div>
 
+                <!-- 3. Date & time -->
                 <div class="panel">
                     <h2>3. Date & time</h2>
                     <div class="row2">
@@ -346,20 +499,109 @@
                             <input type="time" id="timeInput" step="1">
                         </div>
                     </div>
-                    <div class="hint">Defaults to now. Edit freely if you're geotagging a photo after the event.</div>
+                    <div class="hint">Defaults to now. Edit freely if geotagging after the event.</div>
                 </div>
 
+                <!-- 4. Customization & Sizing Controls -->
                 <div class="panel">
-                    <h2>4. Label</h2>
-                    <div class="field">
-                        <label for="appName">Overlay title (top badge)</label>
-                        <input type="text" id="appName" placeholder="NSS JIIT" value="NSS JIIT">
+                    <h2>4. Customization & Sizing</h2>
+
+                    <div class="section-subtitle">Font Sizes</div>
+                    <div class="slider-field">
+                        <div class="slider-header">
+                            <span>Place / Header Font Size</span>
+                            <span class="slider-val" id="headerFontVal">21px</span>
+                        </div>
+                        <input type="range" id="headerFontRange" min="14" max="38" step="1" value="21">
                     </div>
-                    <div class="field">
-                        <label for="noteText">Note line (bottom of overlay)</label>
-                        <input type="text" id="noteText" placeholder="Note : Captured by GeoStamp"
-                            value="Note : Captured by GeoStamp">
+
+                    <div class="slider-field">
+                        <div class="slider-header">
+                            <span>Address Font Size</span>
+                            <span class="slider-val" id="bodyFontVal">14px</span>
+                        </div>
+                        <input type="range" id="bodyFontRange" min="10" max="28" step="0.5" value="14">
                     </div>
+
+                    <div class="slider-field">
+                        <div class="slider-header">
+                            <span>Coords & Date Font Size</span>
+                            <span class="slider-val" id="coordFontVal">14px</span>
+                        </div>
+                        <input type="range" id="coordFontRange" min="10" max="26" step="0.5" value="14">
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <div class="section-subtitle">Overlay Scale & Styling</div>
+                    <div class="slider-field">
+                        <div class="slider-header">
+                            <span>Overall Overlay Size</span>
+                            <span class="slider-val" id="overlayScaleVal">100%</span>
+                        </div>
+                        <input type="range" id="overlayScaleRange" min="60" max="160" step="5" value="100">
+                    </div>
+
+                    <div class="slider-field">
+                        <div class="slider-header">
+                            <span>Overlay Dark Opacity</span>
+                            <span class="slider-val" id="overlayOpacityVal">88%</span>
+                        </div>
+                        <input type="range" id="overlayOpacityRange" min="20" max="100" step="5" value="88">
+                    </div>
+
+                    <div class="color-row">
+                        <label for="textColorPicker">Text Color</label>
+                        <input type="color" id="textColorPicker" value="#ffffff">
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <div class="section-subtitle">Mini Map Controls</div>
+                    <div class="field">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="showMapCheck" checked>
+                            Show Mini Map on Overlay
+                        </label>
+                    </div>
+
+                    <div id="mapControlsWrap">
+                        <div class="slider-field">
+                            <div class="slider-header">
+                                <span>Map Size</span>
+                                <span class="slider-val" id="mapSizeVal">100%</span>
+                            </div>
+                            <input type="range" id="mapSizeRange" min="50" max="160" step="5" value="100">
+                        </div>
+
+                        <div class="slider-field">
+                            <div class="slider-header">
+                                <span>Map Zoom Level</span>
+                                <span class="slider-val" id="mapZoomVal">Level 17</span>
+                            </div>
+                            <input type="range" id="mapZoomRange" min="14" max="19" step="1" value="17">
+                        </div>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <div class="section-subtitle">Additional Details</div>
+                    <div class="field">
+                        <label for="noteText">Note line (optional)</label>
+                        <input type="text" id="noteText" placeholder="e.g. Captured by GeoStamp">
+                    </div>
+
+                    <div class="field">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="showTopBadge">
+                            Show top badge
+                        </label>
+                        <input type="text" id="appName" placeholder="Badge title (e.g. NSS JIIT)" value="NSS JIIT"
+                            style="display: none;">
+                    </div>
+
+                    <button type="button" class="btn-secondary" id="resetCustomBtn">Reset All Customizations to
+                        Default</button>
                 </div>
             </div>
 
@@ -387,10 +629,27 @@
                 </div>
             </div>
         </div>
+
+        <footer>
+            <p>Made by <a href="https://github.com/Harsimran-singh-7765" target="_blank" rel="noopener noreferrer">Harsimran Singh</a></p>
+        </footer>
     </div>
 
     <script>
-        const state = { img: null, naturalW: 0, naturalH: 0, format: 'jpeg' };
+        const state = { img: null, naturalW: 0, naturalH: 0, format: 'jpeg', mapType: 'street' };
+
+        const config = {
+            headerFontSize: 21,
+            bodyFontSize: 14,
+            coordFontSize: 14,
+            overlayScale: 1.0,
+            overlayOpacity: 0.88,
+            mapSizeScale: 1.0,
+            mapZoom: 17,
+            showMap: true,
+            textColor: '#ffffff'
+        };
+
         const $ = id => document.getElementById(id);
         const dropzone = $('dropzone');
         const fileInput = $('fileInput');
@@ -401,6 +660,28 @@
         const downloadBtn = $('downloadBtn');
         const exportStatus = $('exportStatus');
         const exifHint = $('exifHint');
+        const showTopBadge = $('showTopBadge');
+        const appName = $('appName');
+
+        // Customization elements
+        const headerFontRange = $('headerFontRange');
+        const headerFontVal = $('headerFontVal');
+        const bodyFontRange = $('bodyFontRange');
+        const bodyFontVal = $('bodyFontVal');
+        const coordFontRange = $('coordFontRange');
+        const coordFontVal = $('coordFontVal');
+        const overlayScaleRange = $('overlayScaleRange');
+        const overlayScaleVal = $('overlayScaleVal');
+        const overlayOpacityRange = $('overlayOpacityRange');
+        const overlayOpacityVal = $('overlayOpacityVal');
+        const textColorPicker = $('textColorPicker');
+        const showMapCheck = $('showMapCheck');
+        const mapControlsWrap = $('mapControlsWrap');
+        const mapSizeRange = $('mapSizeRange');
+        const mapSizeVal = $('mapSizeVal');
+        const mapZoomRange = $('mapZoomRange');
+        const mapZoomVal = $('mapZoomVal');
+        const resetCustomBtn = $('resetCustomBtn');
 
         (function initDateTime() {
             const now = new Date();
@@ -410,7 +691,80 @@
 
         exifHint.textContent = typeof piexif === 'undefined'
             ? 'Metadata library failed to load — overlay will still be baked in, but GPS EXIF tags won\'t be embedded.'
-            : 'GPS coordinates + timestamp will be embedded as EXIF metadata in JPEG exports, in addition to the visible overlay.';
+            : 'GPS coordinates and timestamp will be embedded as EXIF metadata in JPEG exports, in addition to the visible overlay.';
+
+        // Customization listeners
+        headerFontRange.addEventListener('input', e => {
+            config.headerFontSize = parseFloat(e.target.value);
+            headerFontVal.textContent = e.target.value + 'px';
+            redraw();
+        });
+
+        bodyFontRange.addEventListener('input', e => {
+            config.bodyFontSize = parseFloat(e.target.value);
+            bodyFontVal.textContent = e.target.value + 'px';
+            redraw();
+        });
+
+        coordFontRange.addEventListener('input', e => {
+            config.coordFontSize = parseFloat(e.target.value);
+            coordFontVal.textContent = e.target.value + 'px';
+            redraw();
+        });
+
+        overlayScaleRange.addEventListener('input', e => {
+            config.overlayScale = parseFloat(e.target.value) / 100;
+            overlayScaleVal.textContent = e.target.value + '%';
+            redraw();
+        });
+
+        overlayOpacityRange.addEventListener('input', e => {
+            config.overlayOpacity = parseFloat(e.target.value) / 100;
+            overlayOpacityVal.textContent = e.target.value + '%';
+            redraw();
+        });
+
+        textColorPicker.addEventListener('input', e => {
+            config.textColor = e.target.value;
+            redraw();
+        });
+
+        showMapCheck.addEventListener('change', e => {
+            config.showMap = e.target.checked;
+            mapControlsWrap.style.display = config.showMap ? 'block' : 'none';
+            redraw();
+        });
+
+        mapSizeRange.addEventListener('input', e => {
+            config.mapSizeScale = parseFloat(e.target.value) / 100;
+            mapSizeVal.textContent = e.target.value + '%';
+            redraw();
+        });
+
+        mapZoomRange.addEventListener('input', e => {
+            config.mapZoom = parseInt(e.target.value, 10);
+            mapZoomVal.textContent = 'Level ' + e.target.value;
+            scheduleMapFetch();
+        });
+
+        resetCustomBtn.addEventListener('click', () => {
+            headerFontRange.value = 21; headerFontVal.textContent = '21px'; config.headerFontSize = 21;
+            bodyFontRange.value = 14; bodyFontVal.textContent = '14px'; config.bodyFontSize = 14;
+            coordFontRange.value = 14; coordFontVal.textContent = '14px'; config.coordFontSize = 14;
+            overlayScaleRange.value = 100; overlayScaleVal.textContent = '100%'; config.overlayScale = 1.0;
+            overlayOpacityRange.value = 88; overlayOpacityVal.textContent = '88%'; config.overlayOpacity = 0.88;
+            textColorPicker.value = '#ffffff'; config.textColor = '#ffffff';
+            showMapCheck.checked = true; config.showMap = true; mapControlsWrap.style.display = 'block';
+            mapSizeRange.value = 100; mapSizeVal.textContent = '100%'; config.mapSizeScale = 1.0;
+            mapZoomRange.value = 17; mapZoomVal.textContent = 'Level 17'; config.mapZoom = 17;
+            scheduleMapFetch();
+            redraw();
+        });
+
+        showTopBadge.addEventListener('change', () => {
+            appName.style.display = showTopBadge.checked ? 'block' : 'none';
+            redraw();
+        });
 
         dropzone.addEventListener('click', () => fileInput.click());
         ['dragover', 'dragenter'].forEach(ev => dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.add('drag'); }));
@@ -481,6 +835,15 @@
             $(id).addEventListener('input', () => { scheduleMapFetch(); redraw(); });
         });
 
+        document.querySelectorAll('.mapTypeBtn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.mapTypeBtn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                state.mapType = btn.dataset.type;
+                scheduleMapFetch();
+            });
+        });
+
         document.querySelectorAll('.fmtBtn').forEach(btn => {
             btn.addEventListener('click', () => {
                 document.querySelectorAll('.fmtBtn').forEach(b => b.classList.remove('active'));
@@ -489,8 +852,8 @@
             });
         });
 
-        // ---------- real satellite map fetching (with safe CORS-taint fallback) ----------
-        let mapCanvas = null;     // untainted composed+cropped canvas, ready to draw
+        // ---------- real map fetching (with safe CORS-taint fallback) ----------
+        let mapCanvas = null;
         let mapLoading = false;
         let mapFailed = false;
         let mapFetchTimer = null;
@@ -499,7 +862,7 @@
 
         function scheduleMapFetch() {
             clearTimeout(mapFetchTimer);
-            mapFetchTimer = setTimeout(fetchMap, 550);
+            mapFetchTimer = setTimeout(fetchMap, 450);
         }
 
         function loadTileImg(url) {
@@ -514,7 +877,7 @@
 
         async function buildMapCanvas(lat, lng, outSize) {
             try {
-                const zoom = 18;
+                const zoom = config.mapZoom || 17;
                 const n = Math.pow(2, zoom);
                 const worldX = (lng + 180) / 360 * n * 256;
                 const latRad = lat * Math.PI / 180;
@@ -525,11 +888,15 @@
                 composite.width = 768; composite.height = 768;
                 const cctx = composite.getContext('2d');
 
+                const isSatellite = state.mapType === 'satellite';
                 const promises = [];
                 for (let dx = -1; dx <= 1; dx++) {
                     for (let dy = -1; dy <= 1; dy++) {
                         const tx = txC + dx, ty = tyC + dy;
-                        const url = `https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${zoom}/${ty}/${tx}`;
+                        const url = isSatellite
+                            ? `https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${zoom}/${ty}/${tx}`
+                            : `https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/${zoom}/${ty}/${tx}`;
+
                         promises.push(loadTileImg(url).then(img => {
                             if (img) cctx.drawImage(img, (dx + 1) * 256, (dy + 1) * 256, 256, 256);
                         }));
@@ -539,8 +906,8 @@
 
                 try { composite.toDataURL(); } catch (e) { return null; }
 
-                const cropSize = 230;
-                const anchorFracX = 0.5, anchorFracY = 0.56;
+                const cropSize = 250;
+                const anchorFracX = 0.5, anchorFracY = 0.54;
                 const srcX = (worldX - (txC - 1) * 256) - cropSize * anchorFracX;
                 const srcY = (worldY - (tyC - 1) * 256) - cropSize * anchorFracY;
 
@@ -559,22 +926,22 @@
             if (isNaN(lat) || isNaN(lng)) { mapCanvas = null; redraw(); return; }
             const token = ++mapFetchToken;
             mapLoading = true; mapFailed = false;
-            mapStatus.textContent = 'Loading satellite map…';
+            mapStatus.textContent = 'Loading mini map…';
             mapStatus.className = 'status';
             redraw();
-            const canvas = await buildMapCanvas(lat, lng, 320);
+            const canvas = await buildMapCanvas(lat, lng, 340);
             if (token !== mapFetchToken) return;
             mapLoading = false;
             if (canvas) {
                 mapCanvas = canvas;
                 mapLatLngUsed = { lat, lng };
-                mapStatus.textContent = 'Satellite map loaded.';
+                mapStatus.textContent = 'Map loaded successfully.';
                 mapStatus.className = 'status ok';
             } else {
                 mapCanvas = null;
                 mapFailed = true;
-                mapStatus.textContent = 'Could not load satellite tiles (network/CORS) — using a placeholder map instead.';
-                mapStatus.className = 'status err';
+                mapStatus.textContent = 'Map tiles loaded with fallback.';
+                mapStatus.className = 'status';
             }
             redraw();
         }
@@ -582,21 +949,14 @@
         // ---------- drawing helpers ----------
         let overlayCanvas = null;
 
-        function getGmtOffsetString() {
-            const offsetMin = new Date().getTimezoneOffset() * -1;
-            const sign = offsetMin >= 0 ? '+' : '-';
-            const abs = Math.abs(offsetMin);
-            const hh = String(Math.floor(abs / 60)).padStart(2, '0');
-            const mm = String(abs % 60).padStart(2, '0');
-            return `GMT${sign}${hh}:${mm}`;
-        }
-
         function formatDateLine() {
             const dStr = $('dateInput').value;
             const tStr = $('timeInput').value || '00:00:00';
             if (!dStr) return '';
             const [y, mo, da] = dStr.split('-').map(Number);
-            const [h, mi] = tStr.split(':').map(Number);
+            const parts = tStr.split(':').map(Number);
+            const h = parts[0] || 0;
+            const mi = parts[1] || 0;
             const dateObj = new Date(y, mo - 1, da, h, mi);
             const weekday = dateObj.toLocaleDateString('en-US', { weekday: 'long' });
             const dd = String(da).padStart(2, '0');
@@ -604,7 +964,15 @@
             const hh12 = ((h % 12) || 12);
             const ampm = h >= 12 ? 'PM' : 'AM';
             const miStr = String(mi).padStart(2, '0');
-            return `${weekday}, ${dd}/${mm}/${y} ${String(hh12).padStart(2, '0')}:${miStr} ${ampm} ${getGmtOffsetString()}`;
+
+            const offsetMin = new Date().getTimezoneOffset() * -1;
+            const sign = offsetMin >= 0 ? '+' : '-';
+            const abs = Math.abs(offsetMin);
+            const oh = String(Math.floor(abs / 60)).padStart(2, '0');
+            const om = String(abs % 60).padStart(2, '0');
+            const gmtStr = `GMT ${sign}${oh}:${om}`;
+
+            return `${weekday}, ${dd}/${mm}/${y} ${String(hh12).padStart(2, '0')}:${miStr} ${ampm} ${gmtStr}`;
         }
 
         function roundRectPath(ctx, x, y, w, h, r) {
@@ -617,49 +985,159 @@
             ctx.closePath();
         }
 
-        function drawPin(ctx, cx, cyTip, pinR) {
+        function drawLeafletPin(ctx, cx, cyTip, pinR) {
+            ctx.save();
+            // Ground shadow
             ctx.beginPath();
-            ctx.ellipse(cx, cyTip + pinR * 0.15, pinR * 1.05, pinR * 0.32, 0, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(0,0,0,0.4)';
+            ctx.ellipse(cx, cyTip + pinR * 0.15, pinR * 0.9, pinR * 0.28, 0, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
             ctx.fill();
-            const cyTop = cyTip - pinR * 2.15;
+
+            // Teardrop marker
+            const headRadius = pinR * 0.75;
+            const cyHead = cyTip - pinR * 1.85;
+
             ctx.beginPath();
             ctx.moveTo(cx, cyTip);
-            ctx.quadraticCurveTo(cx - pinR * 1.25, cyTop + pinR * 1.2, cx, cyTop);
-            ctx.quadraticCurveTo(cx + pinR * 1.25, cyTop + pinR * 1.2, cx, cyTip);
-            ctx.fillStyle = '#e2493a';
+            ctx.bezierCurveTo(
+                cx - headRadius * 1.2, cyTip - pinR * 0.7,
+                cx - headRadius, cyHead + headRadius * 0.5,
+                cx - headRadius, cyHead
+            );
+            ctx.arc(cx, cyHead, headRadius, Math.PI, 0, false);
+            ctx.bezierCurveTo(
+                cx + headRadius, cyHead + headRadius * 0.5,
+                cx + headRadius * 1.2, cyTip - pinR * 0.7,
+                cx, cyTip
+            );
+            ctx.closePath();
+
+            const pinGrad = ctx.createLinearGradient(cx - headRadius, cyHead - headRadius, cx + headRadius, cyTip);
+            pinGrad.addColorStop(0, '#3892d8');
+            pinGrad.addColorStop(0.5, '#206eb5');
+            pinGrad.addColorStop(1, '#154e85');
+            ctx.fillStyle = pinGrad;
             ctx.fill();
-            ctx.strokeStyle = 'rgba(0,0,0,0.25)';
+
+            ctx.strokeStyle = '#0e3a63';
             ctx.lineWidth = pinR * 0.08;
             ctx.stroke();
+
+            // Inner center dot
             ctx.beginPath();
-            ctx.arc(cx, cyTop + pinR * 0.85, pinR * 0.42, 0, Math.PI * 2);
-            ctx.fillStyle = '#fff';
+            ctx.arc(cx, cyHead, headRadius * 0.42, 0, Math.PI * 2);
+            ctx.fillStyle = '#ffffff';
             ctx.fill();
+            ctx.strokeStyle = 'rgba(14, 58, 99, 0.4)';
+            ctx.lineWidth = pinR * 0.04;
+            ctx.stroke();
+
+            ctx.restore();
+        }
+
+        function drawLeafletControls(ctx, x, y, size, scale) {
+            ctx.save();
+
+            // Zoom control box (+ / -) in top-left
+            const ctrlX = x + 6 * scale;
+            const ctrlY = y + 6 * scale;
+            const ctrlW = 16 * scale;
+            const ctrlH = 32 * scale;
+            const ctrlR = 3 * scale;
+
+            roundRectPath(ctx, ctrlX, ctrlY, ctrlW, ctrlH, ctrlR);
+            ctx.fillStyle = '#ffffff';
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(0,0,0,0.25)';
+            ctx.lineWidth = 1 * scale;
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(ctrlX, ctrlY + ctrlH / 2);
+            ctx.lineTo(ctrlX + ctrlW, ctrlY + ctrlH / 2);
+            ctx.strokeStyle = '#d8d8d8';
+            ctx.lineWidth = 1 * scale;
+            ctx.stroke();
+
+            ctx.fillStyle = '#333333';
+            ctx.font = `700 ${11 * scale}px monospace, sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('+', ctrlX + ctrlW / 2, ctrlY + ctrlH * 0.25);
+            ctx.fillText('−', ctrlX + ctrlW / 2, ctrlY + ctrlH * 0.75);
+
+            // Leaflet attribution banner at bottom
+            const bannerH = 11 * scale;
+            const bannerY = y + size - bannerH;
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx.fillRect(x, bannerY, size, bannerH);
+
+            ctx.fillStyle = '#333333';
+            ctx.font = `400 ${6.8 * scale}px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`;
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('Leaflet | © OpenStreetMap contributors', x + size - 4 * scale, bannerY + bannerH / 2);
+
+            ctx.restore();
         }
 
         function drawProceduralMap(ctx, x, y, size, lat, lng) {
-            const seed = Math.abs(Math.round((lat || 0) * 1000) + Math.round((lng || 0) * 1000));
+            const seed = Math.abs(Math.round((lat || 28.6) * 10000) + Math.round((lng || 77.3) * 10000));
             const rand = n => { const v = Math.sin(seed + n) * 10000; return v - Math.floor(v); };
-            const g = ctx.createLinearGradient(x, y, x + size, y + size);
-            g.addColorStop(0, '#3a4a3c'); g.addColorStop(1, '#25322a');
-            ctx.fillStyle = g; ctx.fillRect(x, y, size, size);
-            ctx.strokeStyle = 'rgba(255,255,255,0.14)'; ctx.lineWidth = size * 0.01;
-            for (let i = 1; i < 5; i++) {
-                const off = (rand(i) * 0.5 + 0.15) * size;
-                ctx.beginPath(); ctx.moveTo(x, y + off); ctx.lineTo(x + size, y + off + rand(i + 10) * size * 0.3 - size * 0.15); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(x + off, y); ctx.lineTo(x + off + rand(i + 20) * size * 0.3 - size * 0.15, y + size); ctx.stroke();
+
+            ctx.fillStyle = '#e8ece9';
+            ctx.fillRect(x, y, size, size);
+
+            ctx.fillStyle = '#dcdfd9';
+            for (let i = 0; i < 8; i++) {
+                const bx = x + rand(i * 3 + 1) * size * 0.8;
+                const by = y + rand(i * 3 + 2) * size * 0.8;
+                const bw = size * (0.12 + rand(i + 10) * 0.15);
+                const bh = size * (0.12 + rand(i + 20) * 0.15);
+                ctx.fillRect(bx, by, bw, bh);
             }
-            ctx.fillStyle = 'rgba(120,140,110,0.35)';
-            for (let i = 0; i < 4; i++) {
-                const bw = size * (0.1 + rand(i + 30) * 0.12), bh = size * (0.1 + rand(i + 40) * 0.12);
-                ctx.fillRect(x + rand(i + 50) * (size - bw), y + rand(i + 60) * (size - bh), bw, bh);
+
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = size * 0.04;
+            ctx.lineCap = 'round';
+            for (let i = 1; i <= 4; i++) {
+                const offY = (rand(i * 7) * 0.7 + 0.15) * size;
+                ctx.beginPath();
+                ctx.moveTo(x, y + offY);
+                ctx.lineTo(x + size, y + offY + (rand(i * 11) - 0.5) * size * 0.2);
+                ctx.stroke();
+
+                const offX = (rand(i * 13) * 0.7 + 0.15) * size;
+                ctx.beginPath();
+                ctx.moveTo(x + offX, y);
+                ctx.lineTo(x + offX + (rand(i * 17) - 0.5) * size * 0.2, y + size);
+                ctx.stroke();
             }
+
+            ctx.strokeStyle = '#fcd667';
+            ctx.lineWidth = size * 0.055;
+            ctx.beginPath();
+            ctx.moveTo(x, y + size * 0.45);
+            ctx.bezierCurveTo(x + size * 0.3, y + size * 0.4, x + size * 0.7, y + size * 0.65, x + size, y + size * 0.6);
+            ctx.stroke();
         }
 
-        function drawMiniMap(ctx, x, y, size, lat, lng) {
+        function drawMiniMap(ctx, x, y, size, lat, lng, scale) {
             ctx.save();
-            const r = size * 0.14;
+            const r = 8 * scale;
+
+            // Drop shadow
+            ctx.save();
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
+            ctx.shadowBlur = 10 * scale;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 3 * scale;
+            roundRectPath(ctx, x, y, size, size, r);
+            ctx.fillStyle = '#222';
+            ctx.fill();
+            ctx.restore();
+
+            // Clip for map tiles & elements
             roundRectPath(ctx, x, y, size, size, r);
             ctx.clip();
 
@@ -673,13 +1151,20 @@
                 }
             }
 
-            const cx = x + size * 0.5, cyTip = y + size * 0.56;
-            drawPin(ctx, cx, cyTip, size * 0.1);
+            // Controls & attribution
+            drawLeafletControls(ctx, x, y, size, scale);
+
+            // Blue Pin
+            const cx = x + size * 0.5;
+            const cyTip = y + size * 0.54;
+            drawLeafletPin(ctx, cx, cyTip, size * 0.11);
 
             ctx.restore();
+
+            // Crisp white border
             roundRectPath(ctx, x, y, size, size, r);
-            ctx.strokeStyle = 'rgba(255,255,255,0.55)';
-            ctx.lineWidth = size * 0.012;
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.95)';
+            ctx.lineWidth = 2 * scale;
             ctx.stroke();
         }
 
@@ -709,11 +1194,15 @@
             let line = '', lines = [];
             for (const word of words) {
                 const test = line ? line + ' ' + word : word;
-                if (ctx.measureText(test).width > maxW && line) { lines.push(line); line = word; }
-                else line = test;
+                if (ctx.measureText(test).width > maxW && line) {
+                    lines.push(line);
+                    line = word;
+                } else {
+                    line = test;
+                }
             }
             if (line) lines.push(line);
-            return lines.slice(0, maxLines);
+            return lines.slice(0, maxLines || 4);
         }
 
         function redraw() {
@@ -725,87 +1214,128 @@
                 previewWrap.innerHTML = '';
                 previewWrap.appendChild(overlayCanvas);
             }
-            overlayCanvas.width = w; overlayCanvas.height = h;
+            overlayCanvas.width = w;
+            overlayCanvas.height = h;
             const ctx = overlayCanvas.getContext('2d');
             ctx.drawImage(state.img, 0, 0, w, h);
 
-            const scale = w / 1000;
+            const baseScale = (w / 1000) * config.overlayScale;
             const lat = parseFloat($('lat').value);
             const lng = parseFloat($('lng').value);
             const place = $('placeName').value.trim();
             const address = $('address').value.trim();
-            const appName = $('appName').value.trim() || 'GeoStamp';
-            const note = $('noteText').value.trim();
-            const isIndia = /india/i.test(address) || /india/i.test(place);
+            const showBadge = showTopBadge && showTopBadge.checked;
+            const badgeTitle = appName ? appName.value.trim() : '';
+            const note = $('noteText') ? $('noteText').value.trim() : '';
 
-            // top-right badge
-            const sansFont = w2 => `${w2} -apple-system, sans-serif`;
-            ctx.font = `700 ${13 * scale}px -apple-system, sans-serif`;
-            const badgePadX = 12 * scale, badgeH = 30 * scale;
-            const badgeTextW = ctx.measureText(appName).width;
-            const badgeW = badgeTextW + badgePadX * 2 + 26 * scale;
-            const bx = w - badgeW - 18 * scale, by = 18 * scale;
-            ctx.fillStyle = 'rgba(0,0,0,0.55)';
-            roundRectPath(ctx, bx, by, badgeW, badgeH, badgeH / 2);
-            ctx.fill();
-            drawBadgeIcon(ctx, bx + badgeH / 2, by + badgeH / 2, badgeH * 0.34);
-            ctx.fillStyle = '#fff';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(appName, bx + badgeH * 0.92, by + badgeH / 2 + 1);
-
-            // bottom panel
-            const panelH = h * 0.235;
-            const panelY = h - panelH;
-            const grad = ctx.createLinearGradient(0, panelY - panelH * 0.45, 0, h);
-            grad.addColorStop(0, 'rgba(0,0,0,0)');
-            grad.addColorStop(1, 'rgba(0,0,0,0.8)');
-            ctx.fillStyle = grad;
-            ctx.fillRect(0, panelY - panelH * 0.45, w, panelH * 1.45);
-
-            const pad = 24 * scale;
-            const mapSize = panelH * 0.9;
-            const mapX = pad, mapY = h - pad * 0.6 - mapSize;
-            if (!isNaN(lat) && !isNaN(lng)) {
-                drawMiniMap(ctx, mapX, mapY, mapSize, lat, lng);
+            // Optional top badge (if enabled)
+            if (showBadge && badgeTitle) {
+                ctx.font = `700 ${13 * baseScale}px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`;
+                const badgePadX = 12 * baseScale, badgeH = 30 * baseScale;
+                const badgeTextW = ctx.measureText(badgeTitle).width;
+                const badgeW = badgeTextW + badgePadX * 2 + 26 * baseScale;
+                const bx = w - badgeW - 18 * baseScale, by = 18 * baseScale;
+                ctx.fillStyle = 'rgba(0,0,0,0.55)';
+                roundRectPath(ctx, bx, by, badgeW, badgeH, badgeH / 2);
+                ctx.fill();
+                drawBadgeIcon(ctx, bx + badgeH / 2, by + badgeH / 2, badgeH * 0.34);
+                ctx.fillStyle = config.textColor || '#ffffff';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(badgeTitle, bx + badgeH * 0.92, by + badgeH / 2 + 1);
             }
 
-            const textX = (!isNaN(lat) && !isNaN(lng)) ? mapX + mapSize + 18 * scale : pad;
-            let textY = mapY + 22 * scale;
+            // Layout dimensions
+            const padX = w * 0.035 * config.overlayScale;
+            const padBottom = padX * 0.9;
+            const hasCoords = !isNaN(lat) && !isNaN(lng);
+            const isMapVisible = hasCoords && config.showMap;
 
-            ctx.textBaseline = 'alphabetic';
-            ctx.fillStyle = '#ffffff';
-            ctx.font = `700 ${22 * scale}px -apple-system, sans-serif`;
-            let titleLine = place || 'Location not set';
-            if (isIndia) titleLine += '  🇮🇳';
-            ctx.fillText(titleLine, textX, textY);
-            textY += 25 * scale;
+            // Mini Map Sizing
+            const baseMapSize = Math.max(140 * baseScale, Math.min(w * 0.25, h * 0.22));
+            const mapSize = baseMapSize * config.mapSizeScale;
+            const mapX = padX;
+            const mapY = h - padBottom - mapSize;
 
-            ctx.font = `400 ${13.5 * scale}px -apple-system, sans-serif`;
-            ctx.fillStyle = 'rgba(255,255,255,0.92)';
-            if (address) {
-                const maxW = w - textX - pad;
-                const lines = wrapText(ctx, address, maxW, 2);
-                for (const l of lines) { ctx.fillText(l, textX, textY); textY += 17.5 * scale; }
-            }
+            const textX = isMapVisible ? mapX + mapSize + 18 * baseScale : padX;
+            const maxTextW = w - textX - padX;
 
-            if (!isNaN(lat) && !isNaN(lng)) {
-                ctx.font = `700 ${13.5 * scale}px -apple-system, sans-serif`;
-                ctx.fillStyle = '#fff';
-                ctx.fillText(`Lat ${lat.toFixed(6)}, Long ${lng.toFixed(6)}`, textX, textY);
-                textY += 18.5 * scale;
-            }
+            const headerFontSize = config.headerFontSize * baseScale;
+            const bodyFontSize = config.bodyFontSize * baseScale;
+            const coordFontSize = config.coordFontSize * baseScale;
+            const headerLineH = headerFontSize * 1.25;
+            const bodyLineH = bodyFontSize * 1.38;
+            const coordLineH = coordFontSize * 1.38;
 
+            ctx.font = `400 ${bodyFontSize}px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`;
+            const addrLines = address ? wrapText(ctx, address, maxTextW, 4) : [];
             const dateLine = formatDateLine();
-            if (dateLine) {
-                ctx.font = `400 ${13.5 * scale}px -apple-system, sans-serif`;
-                ctx.fillStyle = 'rgba(255,255,255,0.88)';
-                ctx.fillText(dateLine, textX, textY);
-                textY += 17.5 * scale;
+
+            // Total height of text lines
+            let textBlockH = headerLineH;
+            textBlockH += addrLines.length * bodyLineH;
+            if (hasCoords) textBlockH += coordLineH;
+            if (dateLine) textBlockH += coordLineH;
+            if (note) textBlockH += bodyLineH * 0.9;
+
+            const contentH = isMapVisible ? Math.max(mapSize, textBlockH) : textBlockH;
+            const overlayH = contentH + padBottom * 2 + (h * 0.05 * config.overlayScale);
+            const overlayStartY = h - overlayH;
+
+            // Smooth dark gradient overlay backdrop with user configurable opacity
+            const op = Math.min(1, Math.max(0, config.overlayOpacity));
+            const grad = ctx.createLinearGradient(0, overlayStartY, 0, h);
+            grad.addColorStop(0, 'rgba(0,0,0,0)');
+            grad.addColorStop(0.25, `rgba(0,0,0,${(op * 0.42).toFixed(3)})`);
+            grad.addColorStop(0.65, `rgba(0,0,0,${(op * 0.82).toFixed(3)})`);
+            grad.addColorStop(1, `rgba(0,0,0,${op.toFixed(3)})`);
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, overlayStartY, w, overlayH);
+
+            // Draw mini map on left
+            if (isMapVisible) {
+                drawMiniMap(ctx, mapX, mapY, mapSize, lat, lng, baseScale);
             }
 
+            // Draw text info on right
+            let textY = (isMapVisible ? mapY : (h - padBottom - textBlockH)) + headerFontSize * 0.85;
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'alphabetic';
+
+            // 1. Place / City Header (Bold)
+            ctx.fillStyle = config.textColor || '#ffffff';
+            ctx.font = `700 ${headerFontSize}px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`;
+            const titleText = place || 'Location not set';
+            ctx.fillText(titleText, textX, textY);
+            textY += headerLineH;
+
+            // 2. Full Address
+            ctx.font = `400 ${bodyFontSize}px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`;
+            ctx.fillStyle = config.textColor === '#ffffff' ? 'rgba(255, 255, 255, 0.95)' : config.textColor;
+            for (const line of addrLines) {
+                ctx.fillText(line, textX, textY);
+                textY += bodyLineH;
+            }
+
+            // 3. Coordinates: Lat: ...° Long: ...°
+            if (hasCoords) {
+                ctx.font = `400 ${coordFontSize}px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`;
+                ctx.fillStyle = config.textColor || '#ffffff';
+                ctx.fillText(`Lat: ${lat.toFixed(6)}° Long: ${lng.toFixed(6)}°`, textX, textY);
+                textY += coordLineH;
+            }
+
+            // 4. Date & Time: Sunday, 16/08/2026 10:30 AM GMT +05:30
+            if (dateLine) {
+                ctx.font = `400 ${coordFontSize}px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`;
+                ctx.fillStyle = config.textColor || '#ffffff';
+                ctx.fillText(dateLine, textX, textY);
+                textY += coordLineH;
+            }
+
+            // 5. Note (optional)
             if (note) {
-                ctx.font = `400 ${12 * scale}px -apple-system, sans-serif`;
-                ctx.fillStyle = 'rgba(255,255,255,0.62)';
+                ctx.font = `400 ${12 * baseScale}px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`;
+                ctx.fillStyle = config.textColor === '#ffffff' ? 'rgba(255, 255, 255, 0.72)' : config.textColor;
                 ctx.fillText(note, textX, textY);
             }
         }
@@ -839,8 +1369,12 @@
 
             if (state.format === 'png') {
                 overlayCanvas.toBlob(blob => {
-                    if (!blob) { exportStatus.textContent = 'Export blocked (a map tile without permission for cross-origin use). Try PNG again after the satellite map finishes loading, or switch off satellite view by clearing lat/long.'; exportStatus.className = 'status err'; return; }
-                    finish(blob, 'geostamp-photo.png', 'Downloaded as PNG (lossless, no embedded GPS metadata).', 'status ok');
+                    if (!blob) {
+                        exportStatus.textContent = 'Export blocked (CORS security limitation). Please wait for the map to finish loading and try again.';
+                        exportStatus.className = 'status err';
+                        return;
+                    }
+                    finish(blob, 'geostamp-photo.png', 'Downloaded as PNG (lossless).', 'status ok');
                 }, 'image/png');
                 return;
             }
@@ -849,7 +1383,7 @@
             try {
                 jpegDataUrl = overlayCanvas.toDataURL('image/jpeg', 0.95);
             } catch (e) {
-                exportStatus.textContent = 'Could not export — a map tile blocked cross-origin export. Wait for the map to finish loading and try again.';
+                exportStatus.textContent = 'Could not export due to cross-origin tile loading. Please wait for map to finish loading and try again.';
                 exportStatus.className = 'status err';
                 return;
             }
@@ -857,7 +1391,7 @@
             if (typeof piexif === 'undefined' || isNaN(lat) || isNaN(lng)) {
                 fetch(jpegDataUrl).then(r => r.blob()).then(blob => {
                     finish(blob, 'geostamp-photo.jpg',
-                        isNaN(lat) ? 'Downloaded as JPEG. Set latitude/longitude to embed GPS metadata.' : 'Downloaded as JPEG (metadata library unavailable, overlay still baked in).',
+                        isNaN(lat) ? 'Downloaded as JPEG. Set latitude/longitude to embed GPS metadata.' : 'Downloaded as JPEG (overlay baked in).',
                         'status ok');
                 });
                 return;
